@@ -1,92 +1,101 @@
-// const XML_HEADER = `<?xml version="1.0" encoding="UTF-8" ?>
+import { generateClashTest } from './clashGenerator';
+import { LC } from './LC';
 
-// <exchange xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://download.autodesk.com/us/navisworks/schemas/nw-exchange-12.0.xsd" units="ft" filename="" filepath="">
-//   <batchtest name="LRA-NavisworksXMLgenerator" internal_name="LRA-NavisworksXMLgenerator" units="ft">
-//     <clashtests>
-// `;
+export const XML_HEADER = `<?xml version="1.0" encoding="UTF-8" ?>
 
-// const XML_FOOTER = `</clashtests>
-// <selectionsets/>
-// </batchtest>
-// </exchange>`;
+<exchange xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://download.autodesk.com/us/navisworks/schemas/nw-exchange-12.0.xsd" units="ft" filename="" filepath="">
+  <batchtest name="LRA-NavisworksXMLgenerator" internal_name="LRA-NavisworksXMLgenerator" units="ft">
+    <clashtests>
+`;
 
-// export function writeXmlLC1() {
-//   let output = XML_HEADER;
+export const XML_FOOTER = `</clashtests>
+<selectionsets/>
+</batchtest>
+</exchange>`;
 
-//   for (const selectionSet of selectionSetsArray) {
-//     output += generateClashTest(
-//       selectionSetsArray.indexOf(selectionSet),
-//       `_LC1-STAGE1_${selectionSet}`,
-//       'duplicate',
-//       0.1640419948,
-//       true,
-//       selectionSetsArray,
-//       null
-//     );
-//   }
+function padTo3Digits(num: number): string {
+  return num.toString().padStart(3, '0');
+}
 
-//   for (const selectionSet of selectionSetsArray) {
-//     output += generateClashTest(
-//       selectionSetsArray.indexOf(selectionSet),
-//       `_LC1-STAGE2_${selectionSet}`,
-//       'hard',
-//       0.1640419948,
-//       true,
-//       selectionSetsArray,
-//       null
-//     );
-//   }
+export function writeXmlForLCs(lcs: LC[]): string {
+  let output = XML_HEADER;
 
-//   output += XML_FOOTER;
+  for (const lc of lcs) {
+    for (const stage of lc.stageManager.stageList) {
+      const isAutointersect = stage.options.autointesect;
+      const type = stage.options.clashType;
+      const tolerance = stage.options.tollerance;
+      const matrixTable = stage.stageMatrix.matrixElement;
 
-//   return output;
-// }
+      let testCounter = 1;
 
-// export function writeXmlLC2(clashMatrix: HTMLTableElement) {
-//   let output = XML_HEADER;
+      if (isAutointersect) {
+        // Find checked checkboxes
+        const checkedInputs = matrixTable.querySelectorAll('input:checked');
 
-//   const checkedRows = [
-//     ...clashMatrix.querySelectorAll('tr:has(input:checked)'),
-//   ] as HTMLTableRowElement[];
+        checkedInputs.forEach((input) => {
+          const td = input.closest('td');
+          if (!td) return;
+          const groupName = td.getAttribute('data-selection-left');
+          if (!groupName) return;
 
-//   checkedRows.forEach((tr) => {
-//     const reportNumber = checkedRows.indexOf(tr) + 1;
+          const testName = `LC${lc.lcNumber}-STAGE${stage.stageNumber}_${padTo3Digits(testCounter)}_${groupName}`;
 
-//     const selectionLeft: string[] = [];
-//     const selectionRight: string[] = [];
+          output += generateClashTest(
+            testName,
+            type,
+            tolerance,
+            true,
+            [groupName],
+            null
+          );
 
-//     const rowHeader: HTMLTableCellElement | null = tr.querySelector('th');
-//     if (!rowHeader) return;
+          testCounter++;
+        });
 
-//     const selectedLeft: string | null = rowHeader.textContent;
-//     if (!selectedLeft) return;
+      } else {
+        // Matrix mode
+        const checkedRows = [
+          ...matrixTable.querySelectorAll('tr:has(input:checked)'),
+        ] as HTMLTableRowElement[];
 
-//     selectionLeft.push(selectedLeft);
+        checkedRows.forEach((tr) => {
+          const selectionLeft: string[] = [];
+          const selectionRight: string[] = [];
 
-//     const selectedRightArray = [
-//       ...tr.querySelectorAll('td:has(input:checked)'),
-//     ] as HTMLTableCellElement[];
+          const rowHeader = tr.querySelector('th');
+          if (!rowHeader || !rowHeader.textContent) return;
 
-//     selectedRightArray.forEach((td) => {
-//       const selectedRight: string | undefined = td.dataset.selectionRight;
+          const selectedLeft = rowHeader.textContent;
+          selectionLeft.push(selectedLeft);
 
-//       if (!selectedRight) return;
+          const checkedInputs = tr.querySelectorAll('input:checked');
+          checkedInputs.forEach((input) => {
+            const td = input.closest('td');
+            if (!td) return;
+            const selectedRight = td.getAttribute('data-selection-right');
+            if (selectedRight) {
+              selectionRight.push(selectedRight);
+            }
+          });
 
-//       selectionRight.push(selectedRight);
-//     });
+          if (selectionRight.length > 0) {
+             const testName = `LC${lc.lcNumber}-STAGE${stage.stageNumber}_${padTo3Digits(testCounter)}_${selectedLeft}`;
+             output += generateClashTest(
+               testName,
+               type,
+               tolerance,
+               false,
+               selectionLeft,
+               selectionRight
+             );
+             testCounter++;
+          }
+        });
+      }
+    }
+  }
 
-//     output += generateClashTest(
-//       reportNumber,
-//       `_LC2-STAGE1_${selectedLeft}`,
-//       'hard',
-//       0.1640419948,
-//       false,
-//       selectionLeft,
-//       selectionRight
-//     );
-//   });
-
-//   output += XML_FOOTER;
-
-//   return output;
-// }
+  output += XML_FOOTER;
+  return output;
+}

@@ -4,72 +4,68 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Navisworks XML Exporter</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
   <link rel="stylesheet" href="./src/css/style.css">  
 </head>
-<body>
-  <main>
-    <h1>Navisworks XML Exporter</h1>
-    
-    <h2>Selection Sets</h2>
-    
-    <ul id="selection-sets-list"></ul>
-  
-    <form id="selection-sets-form">
-      <input type="text" name="selection-set" required>
-      <input type="submit" value="Add">
-    </form>
+<body class="bg-light">
+  <div class="container py-5">
+    <header class="pb-3 mb-4 border-bottom">
+      <h1 class="display-5 fw-bold text-primary">Navisworks XML Exporter</h1>
+      <p class="fs-5 text-muted">Generate Autodesk Navisworks Clash Detection XML files.</p>
+    </header>
 
-    <hr>
-    <h2>Clash Test Stage Manager (work in progress)</h2>
+    <div id="alerts-container"></div>
 
-    <ul id="clash-stage-list"></ul>
+    <div class="row mb-4">
+      <div class="col-md-6">
+        <div class="card shadow-sm h-100">
+          <div class="card-header bg-white">
+            <h2 class="h5 mb-0">Project Settings</h2>
+          </div>
+          <div class="card-body">
+            <label for="global-tolerance-input" class="form-label">Global Tolerance (cm)</label>
+            <input type="number" class="form-control mb-3" id="global-tolerance-input" value="5" step="0.1" min="0">
+            <div class="form-text mb-3">This will update the default tolerance for new stages.</div>
 
-    <button id="btn-export-xml">Export</button>
-
-  </main>
-
-  <script type="module" src="./src/main.ts"></script>
-
-  <template>
-    <ul id="clash-stage-list">
-      <li class="clash-stage">
-        <div class="clash-section-header">
-          <h3>Stage</h3>
-          <button class="remove-section-btn" disabled>-</button>
-          <button class="add-section-btn">+</button>
+            <button id="btn-default-config" class="btn btn-primary w-100">Load Default Configuration</button>
+          </div>
         </div>
-        <button class="stage-options-btn">stage options</button>
-        <dialog id="modal-stage">
-          <form>
-            <h4>stage options</h4>
-            <section>
-              <label>Clash Type:</label>
-              <label>duplicate
-                <input type="radio" name="clash-type" value="duplicate">
-              </label>
-              <label>intersections
-                <input type="radio" name="clash-type" value="hard">
-              </label>
-            </section>
-            <section>
-              <label>Tollerance</label>
-              <input type="text" name="tollerance" value="0.1640419948">
-            </section>
-            <section>
-              <label>autointersect
-                <input type="checkbox" name="autointesect">
-              </label>
-            </section>
-            <hr>
-            <input type="submit" value="update">
-            <button>cancel</button>
-          </form>
-        </dialog>
-        <button class="stage-gen-clashmatrix-btn">generate clash matrix</button>
-        <button class="stage-refresh-clashmatrix-btn" disabled>refresh clash matrix</button>
-        <table class="stage-clashmatrix"></table>
-      </li>
-    </ul>
-  </template>
+      </div>
+      <div class="col-md-6">
+        <div class="card shadow-sm h-100">
+          <div class="card-header bg-white">
+            <h2 class="h5 mb-0">Selection Sets</h2>
+          </div>
+          <div class="card-body">
+            <form id="clash-group-form" class="mb-3">
+              <div class="input-group">
+                <input type="text" class="form-control" placeholder="Enter selection set name..." name="selection-set" id="clash-group-input" required>
+                <button type="submit" class="btn btn-primary" id="add-clash-group-input">Add</button>
+              </div>
+            </form>
+            <ul id="clash-group-list" class="list-group">
+              <!-- Selection sets will be added here -->
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
 
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <h2>Coordination Levels (LC)</h2>
+      <button id="btn-add-lc" class="btn btn-primary">Add LC</button>
+    </div>
+
+    <ul id="lc-list" class="list-unstyled">
+      <!-- LCs will be generated here -->
+    </ul>
+
+    <div class="mt-5 text-end border-top pt-4">
+      <button id="btn-export-all-xml" class="btn btn-success btn-lg">Export All XML</button>
+    </div>
+
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+  <script type="module" src="./src/main.ts"></script>
+</body>
 </html>

@@ -7,20 +7,61 @@ export class Matrix {
   constructor(parent: Stage) {
     this.parentStage = parent;
     this.matrixElement = document.createElement('table');
+    this.matrixElement.className = 'table table-sm table-bordered mt-3 bg-white';
   }
 
-  renderDuplicateMatrix() {
+  renderMatrix() {
     this.matrixElement.innerHTML = '';
-    this.buildClashMatrix();
+    if (this.parentStage.options.autointesect) {
+      this.buildAutointersectMatrix();
+    } else {
+      this.buildClashMatrix();
+    }
     this.parentStage.stageElement.appendChild(this.matrixElement);
-    console.log('render matrice duplicati');
   }
 
-  renderIntersectionsMatrix() {
-    this.matrixElement.innerHTML = '';
-    this.buildClashMatrix();
-    this.parentStage.stageElement.appendChild(this.matrixElement);
-    console.log('render matrice intersezioni');
+  buildAutointersectMatrix() {
+    const selectionSets = this.parentStage.stageManager.selectionSets;
+    if (selectionSets.length === 0) return;
+
+    const thead = this.matrixElement.createTHead();
+    const tbody = this.matrixElement.createTBody();
+
+    const headerRow = document.createElement('tr');
+
+    const thGroup = document.createElement('th');
+    thGroup.textContent = 'Selection Sets';
+    headerRow.appendChild(thGroup);
+
+    const thSelect = document.createElement('th');
+    thSelect.textContent = 'Generate Self-Intersect Test';
+    thSelect.className = 'text-center';
+    headerRow.appendChild(thSelect);
+
+    thead.appendChild(headerRow);
+
+    for (const group of selectionSets) {
+      const row = document.createElement('tr');
+
+      const tdGroup = document.createElement('td');
+      tdGroup.textContent = group;
+      row.appendChild(tdGroup);
+
+      const tdCheckbox = document.createElement('td');
+      tdCheckbox.className = 'text-center';
+      tdCheckbox.setAttribute('data-selection-left', group);
+      tdCheckbox.setAttribute('data-selection-right', group);
+
+      const checkbox = document.createElement('input');
+      checkbox.type = 'checkbox';
+      checkbox.checked = true; // Default selected
+      checkbox.className = 'form-check-input';
+
+      tdCheckbox.appendChild(checkbox);
+      row.appendChild(tdCheckbox);
+
+      tbody.appendChild(row);
+    }
   }
 
   buildClashMatrix() {
@@ -69,13 +110,13 @@ export class Matrix {
           groupCheckbox.disabled = true;
         }
 
+        groupCheckbox.className = 'form-check-input';
+
         tdCell.appendChild(groupCheckbox);
         row.appendChild(tdCell);
       }
 
       clashMatrixTbody.appendChild(row);
-
-      this.parentStage.stageElement.appendChild(this.matrixElement);
     }
   }
 }

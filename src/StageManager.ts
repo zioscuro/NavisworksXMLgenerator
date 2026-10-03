@@ -1,15 +1,18 @@
 import { Stage } from './Stage';
+import { LC } from './LC';
 
 export class StageManager {
   stageContainer: HTMLUListElement;
   stageList: Stage[] = [];
-  selectionSets: string[]
+  selectionSets: string[];
+  lc: LC;
 
-  constructor(stageContainer: HTMLUListElement, selectionSet: string[]) {
-    this.selectionSets= selectionSet;    
+  constructor(stageContainer: HTMLUListElement, selectionSet: string[], lc: LC) {
+    this.selectionSets = selectionSet;
     this.stageContainer = stageContainer;
+    this.lc = lc;
 
-    const firstStage = new Stage(this);
+    const firstStage = new Stage(this, 1);
     this.stageList.push(firstStage);
 
     this.setupListeners();
@@ -32,9 +35,10 @@ export class StageManager {
   }
 
   addStage() {
-    const newStage = new Stage(this);
+    const newStage = new Stage(this, this.stageList.length + 1);
     this.stageList.push(newStage);
     this.renderUI();
+    this.lc.lcManager.updateDefaultConfigButton();
   }
 
   removeStage(removedStage: Stage) {
@@ -44,7 +48,15 @@ export class StageManager {
 
     const removedStageIndex = this.stageList.indexOf(removedStage);
     this.stageList.splice(removedStageIndex, 1);
+
+    // Re-number stages
+    this.stageList.forEach((stage, index) => {
+      stage.stageNumber = index + 1;
+      stage.updateUI();
+    });
+
     this.renderUI();
+    this.lc.lcManager.updateDefaultConfigButton();
   }
 
   exportXML() {

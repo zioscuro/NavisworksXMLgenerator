@@ -1,16 +1,37 @@
 import { SelectionSetManager } from './SelectionSetManager';
-import { StageManager } from './StageManager';
+import { LCManager } from './LCManager';
 
 const selectionSetsList = document.getElementById(
-  'selection-sets-list'
+  'clash-group-list'
 ) as HTMLUListElement;
 const selectionSetsForm = document.getElementById(
-  'selection-sets-form'
+  'clash-group-form'
 ) as HTMLFormElement;
 
-const clashStageList = document.getElementById(
-  'clash-stage-list'
+const lcListContainer = document.getElementById(
+  'lc-list'
 ) as HTMLUListElement;
 
 const selectionSetManager = new SelectionSetManager(selectionSetsForm, selectionSetsList);
-new StageManager(clashStageList, selectionSetManager.selectionSets);
+const lcManager = new LCManager(lcListContainer, selectionSetManager.selectionSets);
+
+const defaultBtn = document.getElementById('btn-default-config');
+if (defaultBtn) {
+  defaultBtn.addEventListener('click', () => {
+    lcManager.generateDefaultConfig();
+  });
+}
+
+const addLcBtn = document.getElementById('btn-add-lc');
+if (addLcBtn) {
+  addLcBtn.addEventListener('click', () => {
+    lcManager.addLC();
+  });
+}
+
+const exportAllBtn = document.getElementById('btn-export-all-xml');
+if (exportAllBtn) {
+  exportAllBtn.addEventListener('click', () => {
+    lcManager.exportAllXML();
+  });
+}

@@ -7,44 +7,55 @@ type ClashTestOptions = {
   autointesect: boolean;
 };
 
-const defaultOptions: ClashTestOptions = {
-  clashType: 'duplicate',
-  tollerance: 0.1640419948,
-  autointesect: true,
-};
-
 export class Stage {
   stageElement: HTMLElement;
   stageManager: StageManager;
   stageMatrix: Matrix;
-  options: ClashTestOptions = defaultOptions;
+  stageNumber: number;
+  options: ClashTestOptions;
 
-  constructor(manager: StageManager) {
+  constructor(manager: StageManager, stageNumber: number) {
+    const globalTolleranceInput = document.getElementById('global-tolerance-input') as HTMLInputElement;
+    const globalTolleranceCm = globalTolleranceInput ? parseFloat(globalTolleranceInput.value) : 5;
+    const globalTolleranceFt = globalTolleranceCm * 0.0328084;
+
+    this.options = {
+      clashType: 'duplicate',
+      tollerance: globalTolleranceFt,
+      autointesect: true,
+    };
+
     this.stageManager = manager;
+    this.stageNumber = stageNumber;
     this.stageMatrix = new Matrix(this);
     this.stageElement = document.createElement('li');
+    this.stageElement.className = 'clash-stage mb-3 border p-3 rounded bg-light';
+    this.stageElement.innerHTML = this.renderUI();
+    this.setupListeners();
+  }
+
+  updateUI() {
     this.stageElement.innerHTML = this.renderUI();
     this.setupListeners();
   }
 
   renderUI() {
     return `
-    <li class="clash-stage">
-      <div class="clash-stage-header">
-        <h3>Stage</h3>
-        <button class="remove-stage-btn">-</button>
-        <button class="add-stage-btn">+</button>
+    <div>
+      <div class="clash-stage-header d-flex justify-content-between align-items-center mb-2">
+        <h3 class="h6 mb-0">STAGE-${this.stageNumber}</h3>
+        <div>
+          <button class="btn btn-outline-secondary btn-sm remove-stage-btn">-</button>
+          <button class="btn btn-outline-primary btn-sm add-stage-btn">+</button>
+        </div>
       </div>
-      <div class="clash-stage-body">
-        <h4>Current settings</h4>
-        <p>clash type: ${this.options.clashType}</p>
-        <p>tollerance: ${this.options.tollerance}</p>
-        <p>autointersect: ${this.options.autointesect}</p>
-        <button class="options-stage-btn">options</button>
-        <button class="gen-matrix-btn">gen matrix</button>
-        <button class="refresh-matrix-btn" disabled>refresh matrix</button>
+      <div class="clash-stage-body mb-2">
+        <p class="mb-1 text-muted small">Type: ${this.options.clashType}, Tolerance: ${this.options.tollerance} ft, Autointersect: ${this.options.autointesect}</p>
+        <button class="btn btn-sm btn-info options-stage-btn">Options</button>
+        <button class="btn btn-sm btn-primary gen-matrix-btn">Gen Matrix</button>
+        <button class="btn btn-sm btn-secondary refresh-matrix-btn" disabled>Refresh Matrix</button>
       </div>
-      <dialog class="stage-modal">
+      <dialog class="stage-modal p-4 rounded shadow-sm border-0">
         <form>
         <h4>stage options</h4>
         <section>
@@ -57,8 +68,8 @@ export class Stage {
           </label>
         </section>
         <section>
-          <label>Tollerance</label>
-          <input type="text" name="tollerance" value="0.1640419948">
+          <label>Tollerance (ft)</label>
+          <input type="text" name="tollerance" value="${this.options.tollerance}">
         </section>
         <section>
           <label>autointersect
@@ -70,7 +81,7 @@ export class Stage {
         <button>cancel</button>
       </form>
       </dialog>
-    </li>    
+    </div>
     `;
   }
 
@@ -150,11 +161,11 @@ export class Stage {
         autointesect: Boolean(data.get('autointesect') as string),
       };
       this.options = updatedOptions;
-      this.stageElement.innerHTML = this.renderUI();
-      this.setupListeners();
+      this.updateUI();
 
       optionsForm.reset();
       optionsModal.close();
+      this.stageManager.lc.lcManager.updateDefaultConfigButton();
     }
   }
 
@@ -175,23 +186,19 @@ export class Stage {
       return;
     }
 
-    if (this.options.clashType === 'duplicate') {
-      this.stageMatrix.renderDuplicateMatrix();
-    } else {
-      this.stageMatrix.renderIntersectionsMatrix();
-    }
+    this.stageMatrix.renderMatrix();
 
     if (e.target instanceof HTMLButtonElement && e.target === genMatrixBtn) {
       genMatrixBtn.disabled = true;
+      genMatrixBtn.style.display = 'none';
       refreshMatrixBtn.disabled = false;
-      console.log('gen matrix');
+      refreshMatrixBtn.classList.remove('btn-secondary');
+      refreshMatrixBtn.classList.add('btn-warning');
     } else if (
       e.target instanceof HTMLButtonElement &&
       e.target === refreshMatrixBtn
     ) {
-      genMatrixBtn.disabled = false;
-      refreshMatrixBtn.disabled = true;
-      console.log('refresh matrix');
+      // already generated
     }
   }
 }
