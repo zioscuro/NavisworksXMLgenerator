@@ -7,7 +7,7 @@ export class Matrix {
   constructor(parent: Stage) {
     this.parentStage = parent;
     this.matrixElement = document.createElement('table');
-    this.matrixElement.className = 'table table-sm table-bordered mt-3 bg-white';
+    this.matrixElement.className = 'table table-sm table-bordered mt-3 bg-white stage-clashmatrix';
   }
 
   renderMatrix() {
@@ -55,7 +55,17 @@ export class Matrix {
       const checkbox = document.createElement('input');
       checkbox.type = 'checkbox';
       checkbox.checked = true; // Default selected
-      checkbox.className = 'form-check-input';
+      checkbox.className = 'form-check-input mx-auto d-block';
+      tdCheckbox.classList.add('cell-checked');
+
+      checkbox.addEventListener('change', (e) => {
+        const target = e.target as HTMLInputElement;
+        if (target.checked) {
+          tdCheckbox.classList.add('cell-checked');
+        } else {
+          tdCheckbox.classList.remove('cell-checked');
+        }
+      });
 
       tdCheckbox.appendChild(checkbox);
       row.appendChild(tdCheckbox);
@@ -110,7 +120,16 @@ export class Matrix {
           groupCheckbox.disabled = true;
         }
 
-        groupCheckbox.className = 'form-check-input';
+        groupCheckbox.className = 'form-check-input mx-auto d-block';
+
+        groupCheckbox.addEventListener('change', (e) => {
+          const target = e.target as HTMLInputElement;
+          if (target.checked) {
+            tdCell.classList.add('cell-checked');
+          } else {
+            tdCell.classList.remove('cell-checked');
+          }
+        });
 
         tdCell.appendChild(groupCheckbox);
         row.appendChild(tdCell);

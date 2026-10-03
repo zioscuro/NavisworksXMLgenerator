@@ -25,12 +25,14 @@ export class SelectionSetManager {
     this.selectionSets.push(selectionSet);
 
     const newSelectionSetElement = document.createElement('li');
+    newSelectionSetElement.className = 'list-group-item d-flex justify-content-between align-items-center';
 
     const newSelectionSetDescription = document.createElement('span');
     newSelectionSetDescription.textContent = selectionSet;
 
     const newSelectionSetCancBtn = document.createElement('button');
     newSelectionSetCancBtn.textContent = 'X';
+    newSelectionSetCancBtn.className = 'btn btn-danger btn-sm';
     newSelectionSetCancBtn.addEventListener(
       'click',
       this.removeSelectionSet.bind(this)

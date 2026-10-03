@@ -39,10 +39,11 @@ export class StageManager {
     this.stageList.push(newStage);
     this.renderUI();
     this.lc.lcManager.updateDefaultConfigButton();
+    this.lc.updateStageButtons();
   }
 
   removeStage(removedStage: Stage) {
-    if (this.stageList.length === 1) {
+    if (this.stageList.length <= 1) {
       return;
     }
 
@@ -57,6 +58,7 @@ export class StageManager {
 
     this.renderUI();
     this.lc.lcManager.updateDefaultConfigButton();
+    this.lc.updateStageButtons();
   }
 
   exportXML() {

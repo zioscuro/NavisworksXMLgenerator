@@ -32,8 +32,12 @@ export class LC {
       </div>
       <div class="card-body">
         <ul class="lc-stage-list list-unstyled"></ul>
-        <div class="mt-3">
+        <div class="mt-3 d-flex justify-content-between align-items-center">
           <button class="btn btn-success export-lc-btn">Export LC${this.lcNumber} XML</button>
+          <div>
+            <button class="btn btn-outline-secondary btn-sm remove-stage-btn" disabled>-</button>
+            <button class="btn btn-outline-primary btn-sm add-stage-btn">+</button>
+          </div>
         </div>
       </div>
     `;
@@ -58,6 +62,28 @@ export class LC {
       exportBtn.addEventListener('click', () => {
          this.lcManager.exportLC(this);
       });
+    }
+
+    const addStageBtn = this.lcElement.querySelector('.add-stage-btn');
+    if (addStageBtn) {
+      addStageBtn.addEventListener('click', () => this.stageManager.addStage());
+    }
+
+    const removeStageBtn = this.lcElement.querySelector('.remove-stage-btn');
+    if (removeStageBtn) {
+      removeStageBtn.addEventListener('click', () => {
+        const lastStage = this.stageManager.stageList[this.stageManager.stageList.length - 1];
+        if (lastStage) {
+          this.stageManager.removeStage(lastStage);
+        }
+      });
+    }
+  }
+
+  updateStageButtons() {
+    const removeStageBtn = this.lcElement.querySelector('.remove-stage-btn') as HTMLButtonElement;
+    if (removeStageBtn) {
+      removeStageBtn.disabled = this.stageManager.stageList.length <= 1;
     }
   }
 }

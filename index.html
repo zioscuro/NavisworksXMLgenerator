@@ -23,11 +23,29 @@
             <h2 class="h5 mb-0">Project Settings</h2>
           </div>
           <div class="card-body">
-            <label for="global-tolerance-input" class="form-label">Global Tolerance (cm)</label>
-            <input type="number" class="form-control mb-3" id="global-tolerance-input" value="5" step="0.1" min="0">
-            <div class="form-text mb-3">This will update the default tolerance for new stages.</div>
+            <div class="mb-3">
+              <label for="global-tolerance-input" class="form-label">Global Tolerance (cm)</label>
+              <input type="number" class="form-control" id="global-tolerance-input" value="5" step="0.1" min="0">
+            </div>
 
-            <button id="btn-default-config" class="btn btn-primary w-100">Load Default Configuration</button>
+            <div class="mb-3">
+              <label for="global-clash-type" class="form-label">Default Clash Type</label>
+              <select class="form-select" id="global-clash-type">
+                <option value="hard" selected>Hard</option>
+                <option value="duplicate">Duplicate</option>
+              </select>
+            </div>
+
+            <div class="mb-4 form-check">
+              <input class="form-check-input" type="checkbox" id="global-autointersect">
+              <label class="form-check-label" for="global-autointersect">
+                Default Autointersect
+              </label>
+            </div>
+
+            <div class="form-text mb-3">These settings act as default values for newly added manual stages.</div>
+
+            <button id="btn-default-config" class="btn btn-primary w-100">Load Default Configuration Template</button>
           </div>
         </div>
       </div>
