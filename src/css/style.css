@@ -9,25 +9,17 @@ tbody th {
   vertical-align: middle;
 }
 
-#clashMatrix-LC2 .form-check-input:checked {
+.stage-clashmatrix .form-check-input:checked {
   background-color: #198754; /* Bootstrap success green */
   border-color: #198754;
 }
 
-#btn-refresh-clashmatrix {
-  display: none
-}
-
-.clash-section-header {
-  display: flex
-}
-
-#clashMatrix-LC2 td {
+.stage-clashmatrix td {
   text-align: center;
   vertical-align: middle;
   transition: background-color 0.2s ease;
 }
 
-#clashMatrix-LC2 td.cell-checked {
+.stage-clashmatrix td.cell-checked {
   background-color: #d1e7dd; /* Bootstrap success green background */
 }

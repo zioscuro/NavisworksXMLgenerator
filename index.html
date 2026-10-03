@@ -23,9 +23,29 @@
             <h2 class="h5 mb-0">Project Settings</h2>
           </div>
           <div class="card-body">
-            <label for="global-tolerance-input" class="form-label">Global Tolerance (cm)</label>
-            <input type="number" class="form-control" id="global-tolerance-input" value="5" step="0.1" min="0">
-            <div class="form-text">This will update the default tolerance for both LC1 and LC2.</div>
+            <div class="mb-3">
+              <label for="global-tolerance-input" class="form-label">Global Tolerance (cm)</label>
+              <input type="number" class="form-control" id="global-tolerance-input" value="5" step="0.1" min="0">
+            </div>
+
+            <div class="mb-3">
+              <label for="global-clash-type" class="form-label">Default Clash Type</label>
+              <select class="form-select" id="global-clash-type">
+                <option value="hard" selected>Hard</option>
+                <option value="duplicate">Duplicate</option>
+              </select>
+            </div>
+
+            <div class="mb-4 form-check">
+              <input class="form-check-input" type="checkbox" id="global-autointersect">
+              <label class="form-check-label" for="global-autointersect">
+                Default Autointersect
+              </label>
+            </div>
+
+            <div class="form-text mb-3">These settings act as default values for newly added manual stages.</div>
+
+            <button id="btn-default-config" class="btn btn-primary w-100">Load Default Configuration Template</button>
           </div>
         </div>
       </div>
@@ -37,7 +57,7 @@
           <div class="card-body">
             <form id="clash-group-form" class="mb-3">
               <div class="input-group">
-                <input type="text" class="form-control" placeholder="Enter selection set name..." name="clash-group" id="clash-group-input">
+                <input type="text" class="form-control" placeholder="Enter selection set name..." name="selection-set" id="clash-group-input" required>
                 <button type="submit" class="btn btn-primary" id="add-clash-group-input">Add</button>
                 <div class="invalid-feedback">
                   Please provide a valid, unique selection set name.
@@ -52,55 +72,17 @@
       </div>
     </div>
 
-    <div class="row">
-      <div class="col-12 mb-4">
-        <div class="card shadow-sm">
-          <div class="card-header bg-white d-flex justify-content-between align-items-center">
-            <h2 class="h5 mb-0">Clash LC1 (Self-intersection)</h2>
-          </div>
-          <div class="card-body">
-            <p>Generates <em>duplicate</em> and <em>hard</em> self-intersecting clash tests for each selection set.</p>
-            <div class="row align-items-end mb-3">
-              <div class="col-md-4">
-                <label for="lc1-tolerance-input" class="form-label">LC1 Tolerance (cm)</label>
-                <input type="number" class="form-control" id="lc1-tolerance-input" value="5" step="0.1" min="0">
-              </div>
-              <div class="col-md-8 text-end">
-                <button id="btn-export-LC1" class="btn btn-success">Export LC1 XML</button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <h2 class="h4">Coordination Levels (LC)</h2>
+      <button id="btn-add-lc" class="btn btn-primary">Add LC</button>
+    </div>
 
-      <div class="col-12 mb-4">
-        <div class="card shadow-sm">
-          <div class="card-header bg-white d-flex justify-content-between align-items-center">
-            <h2 class="h5 mb-0">Clash LC2 (Matrix)</h2>
-          </div>
-          <div class="card-body">
-            <p>Generates <em>hard</em> clash tests based on selected intersections.</p>
-            <div class="row align-items-end mb-3">
-              <div class="col-md-4">
-                <label for="lc2-tolerance-input" class="form-label">LC2 Tolerance (cm)</label>
-                <input type="number" class="form-control" id="lc2-tolerance-input" value="5" step="0.1" min="0">
-              </div>
-            </div>
+    <ul id="lc-list" class="list-unstyled">
+      <!-- LCs will be generated here -->
+    </ul>
 
-            <div class="clashMatrix table-responsive mb-3 border rounded p-2 bg-light">
-              <table id="clashMatrix-LC2" class="table table-sm table-bordered mb-0"></table>
-            </div>
-
-            <div class="d-flex justify-content-between">
-              <div>
-                <button id="btn-generate-clashmatrix" class="btn btn-primary">Generate Clash Matrix</button>
-                <button id="btn-refresh-clashmatrix" class="btn btn-secondary" disabled>Refresh Clash Matrix</button>
-              </div>
-              <button id="btn-export-LC2" class="btn btn-success" disabled>Export LC2 XML</button>
-            </div>
-          </div>
-        </div>
-      </div>
+    <div class="mt-5 text-end border-top pt-4">
+      <button id="btn-export-all-xml" class="btn btn-success btn-lg">Export All XML</button>
     </div>
 
   </div>
