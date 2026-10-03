@@ -10,26 +10,26 @@ This application is a TypeScript-based web tool built with Vite and Bootstrap. I
 ## Installation & Setup
 
 1. **Clone the repository:**
-   \`\`\`bash
-   git clone <repository_url>
+   ```bash
+   git clone https://github.com/zioscuro/NavisworksXMLgenerator.git
    cd NavisworksXMLgenerator
-   \`\`\`
+   ```
 
 2. **Install dependencies:**
-   \`\`\`bash
+   ```bash
    npm install
-   \`\`\`
+   ```
 
 3. **Run the development server:**
-   \`\`\`bash
+   ```bash
    npm run dev
-   \`\`\`
+   ```
    This will start the local server, typically available at `http://localhost:5173`.
 
 4. **Build for production:**
-   \`\`\`bash
+   ```bash
    npm run build
-   \`\`\`
+   ```
    The generated static files will be located in the `dist` directory.
 
 ## How to Use
