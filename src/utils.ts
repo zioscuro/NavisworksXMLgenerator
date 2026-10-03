@@ -1,3 +1,7 @@
+export function cmToFeet(cm: number): number {
+  return cm * 0.0328084;
+}
+
 export function downloadXml(filename: string, text: string) {
   const element = document.createElement('a');
   element.setAttribute(

@@ -1,18 +1,36 @@
 export const selectionSetsArray: string[] = [];
 
 export function clashSelectionSetManager(clashGroupInput: HTMLInputElement, clashGroupList: HTMLUListElement) {
+  const inputValue = clashGroupInput.value.trim();
+
+  // Validation: Check for empty or duplicate names
+  if (!inputValue) {
+    clashGroupInput.classList.add('is-invalid');
+    return false; // Indicates failure
+  }
+
+  if (selectionSetsArray.includes(inputValue)) {
+    clashGroupInput.classList.add('is-invalid');
+    return false; // Indicates failure
+  }
+
+  // Remove invalid class if valid
+  clashGroupInput.classList.remove('is-invalid');
+
   const newClashGroupElement = document.createElement('li');
+  newClashGroupElement.className = 'list-group-item d-flex justify-content-between align-items-center';
 
   const newClashGroupDescription = document.createElement('span');
   const newClashGroupCancBtn = document.createElement('button');
 
-  newClashGroupDescription.textContent = clashGroupInput.value;
+  newClashGroupDescription.textContent = inputValue;
   newClashGroupCancBtn.textContent = 'X';
+  newClashGroupCancBtn.className = 'btn btn-danger btn-sm';
 
   newClashGroupElement.appendChild(newClashGroupDescription);
   newClashGroupElement.appendChild(newClashGroupCancBtn);
 
-  selectionSetsArray.push(newClashGroupDescription.textContent);
+  selectionSetsArray.push(inputValue);
 
   clashGroupList.appendChild(newClashGroupElement);
 
@@ -36,4 +54,6 @@ export function clashSelectionSetManager(clashGroupInput: HTMLInputElement, clas
     clashGroupList.removeChild(selectedClashGroup);
     selectionSetsArray.splice(selectecClashGroupIndex, 1);
   });
+
+  return true; // Indicates success
 }

@@ -4,40 +4,107 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Navisworks XML Exporter</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
   <link rel="stylesheet" href="./src/css/style.css">  
 </head>
-<body>
-  <main>
-    <h1>Navisworks XML Exporter</h1>
-    
-    <h2>Selection Sets</h2>
-    
-    <ul id="clash-group-list">
-      
-    </ul>
-  
-    <form id="clash-group-form">
-      <input type="text" name="clash-group" id="clash-group-input">
-      <input type="submit" value="Add" id="add-clash-group-input">
-    </form>
+<body class="bg-light">
+  <div class="container py-5">
+    <header class="pb-3 mb-4 border-bottom">
+      <h1 class="display-5 fw-bold text-primary">Navisworks XML Exporter</h1>
+      <p class="fs-5 text-muted">Generate Autodesk Navisworks Clash Detection XML files.</p>
+    </header>
 
-    <hr>
-    
-    <h2>Clash LC1</h2>    
-  
-    <button id="btn-export-LC1">Export</button>
-  
-    <h2>Clash LC2</h2>
-    <div class="clashMatrix">
-      <button id="btn-generate-clashmatrix">Generate ClashMatrix</button>
-      
-      <table id="clashMatrix-LC2"></table>
-  
-      <button id="btn-refresh-clashmatrix" disabled>Refresh ClashMatrix</button>
-    </div>    
+    <div id="alerts-container"></div>
 
-    <button id="btn-export-LC2" disabled>Export</button>
+    <div class="row mb-4">
+      <div class="col-md-6">
+        <div class="card shadow-sm h-100">
+          <div class="card-header bg-white">
+            <h2 class="h5 mb-0">Project Settings</h2>
+          </div>
+          <div class="card-body">
+            <label for="global-tolerance-input" class="form-label">Global Tolerance (cm)</label>
+            <input type="number" class="form-control" id="global-tolerance-input" value="5" step="0.1" min="0">
+            <div class="form-text">This will update the default tolerance for both LC1 and LC2.</div>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="card shadow-sm h-100">
+          <div class="card-header bg-white">
+            <h2 class="h5 mb-0">Selection Sets</h2>
+          </div>
+          <div class="card-body">
+            <form id="clash-group-form" class="mb-3">
+              <div class="input-group">
+                <input type="text" class="form-control" placeholder="Enter selection set name..." name="clash-group" id="clash-group-input">
+                <button type="submit" class="btn btn-primary" id="add-clash-group-input">Add</button>
+                <div class="invalid-feedback">
+                  Please provide a valid, unique selection set name.
+                </div>
+              </div>
+            </form>
+            <ul id="clash-group-list" class="list-group">
+              <!-- Selection sets will be added here -->
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
 
-  </main>
+    <div class="row">
+      <div class="col-12 mb-4">
+        <div class="card shadow-sm">
+          <div class="card-header bg-white d-flex justify-content-between align-items-center">
+            <h2 class="h5 mb-0">Clash LC1 (Self-intersection)</h2>
+          </div>
+          <div class="card-body">
+            <p>Generates <em>duplicate</em> and <em>hard</em> self-intersecting clash tests for each selection set.</p>
+            <div class="row align-items-end mb-3">
+              <div class="col-md-4">
+                <label for="lc1-tolerance-input" class="form-label">LC1 Tolerance (cm)</label>
+                <input type="number" class="form-control" id="lc1-tolerance-input" value="5" step="0.1" min="0">
+              </div>
+              <div class="col-md-8 text-end">
+                <button id="btn-export-LC1" class="btn btn-success">Export LC1 XML</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-12 mb-4">
+        <div class="card shadow-sm">
+          <div class="card-header bg-white d-flex justify-content-between align-items-center">
+            <h2 class="h5 mb-0">Clash LC2 (Matrix)</h2>
+          </div>
+          <div class="card-body">
+            <p>Generates <em>hard</em> clash tests based on selected intersections.</p>
+            <div class="row align-items-end mb-3">
+              <div class="col-md-4">
+                <label for="lc2-tolerance-input" class="form-label">LC2 Tolerance (cm)</label>
+                <input type="number" class="form-control" id="lc2-tolerance-input" value="5" step="0.1" min="0">
+              </div>
+            </div>
+
+            <div class="clashMatrix table-responsive mb-3 border rounded p-2 bg-light">
+              <table id="clashMatrix-LC2" class="table table-sm table-bordered mb-0"></table>
+            </div>
+
+            <div class="d-flex justify-content-between">
+              <div>
+                <button id="btn-generate-clashmatrix" class="btn btn-primary">Generate Clash Matrix</button>
+                <button id="btn-refresh-clashmatrix" class="btn btn-secondary" disabled>Refresh Clash Matrix</button>
+              </div>
+              <button id="btn-export-LC2" class="btn btn-success" disabled>Export LC2 XML</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
   <script type="module" src="./src/main.ts"></script>
+</body>
 </html>
