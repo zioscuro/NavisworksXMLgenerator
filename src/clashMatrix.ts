@@ -33,10 +33,20 @@ export function buildClashMatrix(clashMatrix: HTMLTableElement, SelectionSetsArr
       const groupCheckbox = document.createElement("input");
       groupCheckbox.type = "checkbox";
       groupCheckbox.checked = false;
+      groupCheckbox.className = "form-check-input m-0";
 
       if (tdCell.dataset.selectionLeft === tdCell.dataset.selectionRight) {
         groupCheckbox.disabled = true;
       }
+
+      groupCheckbox.addEventListener("change", (e) => {
+        const target = e.target as HTMLInputElement;
+        if (target.checked) {
+          tdCell.classList.add("cell-checked");
+        } else {
+          tdCell.classList.remove("cell-checked");
+        }
+      });
 
       tdCell.appendChild(groupCheckbox);
       row.appendChild(tdCell);

@@ -1,4 +1,4 @@
-import { downloadXml } from './utils';
+import { downloadXml, cmToFeet } from './utils';
 import { writeXmlLC1, writeXmlLC2 } from './clashXMLwriter';
 import { buildClashMatrix, resetClashMatrix } from './clashMatrix';
 import { clashSelectionSetManager, selectionSetsArray} from './clashSelectionSets';
@@ -30,12 +30,46 @@ const clashMatrixLC2 = document.getElementById(
   'clashMatrix-LC2'
 ) as HTMLTableElement;
 
+const globalToleranceInput = document.getElementById('global-tolerance-input') as HTMLInputElement;
+const lc1ToleranceInput = document.getElementById('lc1-tolerance-input') as HTMLInputElement;
+const lc2ToleranceInput = document.getElementById('lc2-tolerance-input') as HTMLInputElement;
+const alertsContainer = document.getElementById('alerts-container') as HTMLDivElement;
+
+function showAlert(message: string, type: 'success' | 'danger') {
+  const alertDiv = document.createElement('div');
+  alertDiv.className = `alert alert-${type} alert-dismissible fade show`;
+  alertDiv.role = 'alert';
+  alertDiv.innerHTML = `
+    ${message}
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+  `;
+  alertsContainer.appendChild(alertDiv);
+
+  // Auto dismiss after 5 seconds
+  setTimeout(() => {
+    alertDiv.classList.remove('show');
+    setTimeout(() => alertDiv.remove(), 150); // wait for fade transition
+  }, 5000);
+}
+
+globalToleranceInput.addEventListener('input', () => {
+  const val = globalToleranceInput.value;
+  lc1ToleranceInput.value = val;
+  lc2ToleranceInput.value = val;
+});
+
 clashGroupAddBtn.addEventListener('click', (e: Event) => {
   e.preventDefault();
 
-  clashSelectionSetManager(clashGroupInput, clashGroupList);
+  const success = clashSelectionSetManager(clashGroupInput, clashGroupList);
 
-  btnExportLC2.disabled = true;
+  if (success) {
+    btnExportLC2.disabled = true;
+  }
+});
+
+clashGroupInput.addEventListener('input', () => {
+    clashGroupInput.classList.remove('is-invalid');
 });
 
 btnGenerateClashMatrix.addEventListener('click', () => {
@@ -57,10 +91,20 @@ btnRefreshClashMatrix.addEventListener('click', () => {
 });
 
 btnExportLC1.addEventListener('click', () => {
-  downloadXml('fileXML-LC1', writeXmlLC1());
+  if (selectionSetsArray.length === 0) {
+    showAlert('Please add at least one Selection Set before exporting LC1.', 'danger');
+    return;
+  }
+  const tolCm = parseFloat(lc1ToleranceInput.value) || 5;
+  const tolFt = cmToFeet(tolCm);
+  downloadXml('fileXML-LC1', writeXmlLC1(tolFt));
+  showAlert('LC1 XML exported successfully!', 'success');
 });
 
 btnExportLC2.addEventListener('click', () => {
-  downloadXml('fileXML-LC2', writeXmlLC2(clashMatrixLC2));
+  const tolCm = parseFloat(lc2ToleranceInput.value) || 5;
+  const tolFt = cmToFeet(tolCm);
+  downloadXml('fileXML-LC2', writeXmlLC2(clashMatrixLC2, tolFt));
+  showAlert('LC2 XML exported successfully!', 'success');
 });
 

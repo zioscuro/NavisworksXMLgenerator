@@ -1,10 +1,17 @@
 thead th {
   writing-mode: vertical-lr;
-  text-align: end;
+  text-align: center;
+  vertical-align: middle;
 }
 
 tbody th {
   text-align: end;
+  vertical-align: middle;
+}
+
+#clashMatrix-LC2 .form-check-input:checked {
+  background-color: #198754; /* Bootstrap success green */
+  border-color: #198754;
 }
 
 #btn-refresh-clashmatrix {
@@ -13,4 +20,14 @@ tbody th {
 
 .clash-section-header {
   display: flex
+}
+
+#clashMatrix-LC2 td {
+  text-align: center;
+  vertical-align: middle;
+  transition: background-color 0.2s ease;
+}
+
+#clashMatrix-LC2 td.cell-checked {
+  background-color: #d1e7dd; /* Bootstrap success green background */
 }

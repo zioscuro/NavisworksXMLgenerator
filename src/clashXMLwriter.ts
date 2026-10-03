@@ -13,7 +13,7 @@ const XML_FOOTER = `</clashtests>
 </batchtest>
 </exchange>`;
 
-export function writeXmlLC1() {
+export function writeXmlLC1(toleranceFt: number) {
   let output = XML_HEADER;
 
   for (const selectionSet of selectionSetsArray) {
@@ -21,9 +21,9 @@ export function writeXmlLC1() {
       selectionSetsArray.indexOf(selectionSet),
       `_LC1-STAGE1_${selectionSet}`,
       'duplicate',
-      0.1640419948,
+      toleranceFt,
       true,
-      selectionSetsArray,
+      [selectionSet],
       null
     );
   }
@@ -33,9 +33,9 @@ export function writeXmlLC1() {
       selectionSetsArray.indexOf(selectionSet),
       `_LC1-STAGE2_${selectionSet}`,
       'hard',
-      0.1640419948,
+      toleranceFt,
       true,
-      selectionSetsArray,
+      [selectionSet],
       null
     );
   }
@@ -45,7 +45,7 @@ export function writeXmlLC1() {
   return output;
 }
 
-export function writeXmlLC2(clashMatrix: HTMLTableElement) {
+export function writeXmlLC2(clashMatrix: HTMLTableElement, toleranceFt: number) {
   let output = XML_HEADER;
 
   const checkedRows = [
@@ -82,7 +82,7 @@ export function writeXmlLC2(clashMatrix: HTMLTableElement) {
       reportNumber,
       `_LC2-STAGE1_${selectedLeft}`,
       'hard',
-      0.1640419948,
+      toleranceFt,
       false,
       selectionLeft,
       selectionRight
