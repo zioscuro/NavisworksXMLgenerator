@@ -53,6 +53,10 @@ This application is a TypeScript-based web tool built with Vite and Bootstrap. I
 - Select the checkboxes corresponding to the pairs you want to test. (The diagonal A vs A is intentionally disabled since self-intersections are handled in LC1).
 - Click **Export LC2 XML** to download the generated file.
 
+### 5. Import Clash Tests in Navisworks
+- **Important: XML import requires that Selection Sets in Navisworks are configured with the exact same name that you have defined in this app**
+- import generated XML file in Clash Detective/Import Clash Tests
+
 ## Technologies Used
 - TypeScript
 - Vite
